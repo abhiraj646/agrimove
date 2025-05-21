@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AgriMove - Login & Request</title>
+  <style> body { font-family: Arial; margin: 40px; } input, button { margin: 5px 0; padding: 10px; width: 100%; } </style>
+</head>
+<body>
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username" value="farmer1">
+  <input type="password" id="password" placeholder="Password" value="password">
+  <button onclick="login()">Login</button>
+
+  <h2>Post Transport Request</h2>
+  <input type="text" id="farmer_name" placeholder="Farmer Name">
+  <input type="text" id="produce" placeholder="Produce">
+  <input type="number" id="quantity" placeholder="Quantity">
+  <input type="text" id="pickup" placeholder="Pickup Location">
+  <input type="text" id="destination" placeholder="Destination">
+  <button onclick="submitRequest()">Submit Request</button>
+  <p id="msg"></p>
+
+<script>
+let token = "";
+
+async function login() {
+  const res = await fetch("http://localhost:8000/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value
+    })
+  });
+  const data = await res.json();
+  token = data.access_token;
+  document.getElementById("msg").innerText = "Login successful!";
+}
+
+async function submitRequest() {
+  const body = {
+    farmer_name: document.getElementById("farmer_name").value,
+    produce: document.getElementById("produce").value,
+    quantity: parseInt(document.getElementById("quantity").value),
+    pickup: document.getElementById("pickup").value,
+    destination: document.getElementById("destination").value
+  };
+  const res = await fetch("http://localhost:8000/api/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(body)
+  });
+  const result = await res.json();
+  document.getElementById("msg").innerText = result.message;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AgriMove Dashboard</title>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Dashboard - All Transport Requests</h2>
+  <table id="dataTable">
+    <tr>
+      <th>Farmer</th><th>Produce</th><th>Quantity</th><th>From</th><th>To</th>
+    </tr>
+  </table>
+
+  <script>
+    async function fetchData() {
+      const res = await fetch("http://localhost:8000/api/request");
+      const data = await res.json();
+      const table = document.getElementById("dataTable");
+      data.forEach(req => {
+        const row = table.insertRow();
+        row.innerHTML = `<td>${req.farmer_name}</td><td>${req.produce}</td><td>${req.quantity}</td><td>${req.pickup}</td><td>${req.destination}</td>`;
+      });
+    }
+    fetchData();
+  </script>
+</body>
+</html>
